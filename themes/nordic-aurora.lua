@@ -32,7 +32,7 @@ colors.danger               = "#bf616a"
 
 local theme                 = {}
 
-theme.font                  = "UbuntuMono Nerd Font 12"
+theme.font                  = "Hack 9"
 
 theme.bg_normal             = colors.dark1
 theme.bg_focus              = colors.dark1
@@ -53,6 +53,7 @@ theme.taglist_bg_focus      = colors.primary
 theme.taglist_bg_urgent     = colors.secondary
 theme.taglist_fg_focus      = colors.dark1
 theme.taglist_fg_occupied   = colors.accent
+theme.taglist_fg_empty      = colors.dark3
 
 theme.wibar_border_width    = 2
 theme.wibar_border_color    = colors.dark1
@@ -99,11 +100,12 @@ theme.menu_width        = dpi(100)
 --theme.bg_widget = "#cc0000"
 
 -- Define the image to load
-theme.wallpaper         = "~/.config/awesome/themes/203514.jpg"
+theme.wallpaper         = "~/Pictures/Walls/Blue Firewatch 2560x1600 wallpapers.png"
 
 -- You can use your own layout icons like this:
-theme.layout_floating   = "/usr/share/icons/Papirus-Dark/symbolic/status/airplane-mode-symbolic.svg"
-theme.layout_tile       = "/usr/share/icons/Papirus-Dark/symbolic/actions/view-grid-symbolic.svg"
+theme.layout_floating   = "~/Pictures/LayoutIcons/layout-floating.png"
+theme.layout_tile       = "~/Pictures/LayoutIcons/layout-monadtall.png"
+theme.layout_max        = "~/Pictures/LayoutIcons/layout-max.png"
 
 -- Generate Awesome icon:
 theme.awesome_icon      = theme_assets.awesome_icon(

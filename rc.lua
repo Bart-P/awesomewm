@@ -47,12 +47,7 @@ do
 end
 -- }}}
 
-os.execute("autorandr -l horizontal")
-if screen:count() > 1 then
-    os.execute("xrandr --output DP-1-1 --primary")
-    os.execute("xrandr --output DP-1-2")
-    os.execute("xrandr --output eDP-1 --off")
-end
+-- awful.spawn("/home/bp/Scripts/autostart.sh")
 
 -- {{{ User Function definitions
 -- this will close all clients on all tags and screens
@@ -67,15 +62,15 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
+-- beautiful.init(gears.filesystem.get_configuration_dir() .. "themes/nordic-aurora.lua")
 beautiful.init(gears.filesystem.get_configuration_dir() .. "themes/nordic-aurora.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "alacritty"
+terminal = "kitty"
 editor = os.getenv("EDITOR") or "nvim"
 editor_cmd = terminal .. " -e " .. editor
 browser = "firefox"
-clipboardmanager = "xfce4-popup-clipman-actions"
-
+clipboardmanager = "xfce4-clipman-history"
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -88,6 +83,7 @@ modkey = "Mod4"
 awful.layout.layouts = {
     awful.layout.suit.tile,
     awful.layout.suit.floating,
+    awful.layout.suit.max,
 }
 -- }}}
 
@@ -115,21 +111,22 @@ mylauncher = awful.widget.launcher({
 -- {{{ Helper function for quitmenu
 myquitmenu = {
     { "Log Out", function() awesome.quit() end,
-        menubar.utils.lookup_icon("/usr/share/icons/Arc/actions/24@2x/undo.png")
+        menubar.utils.lookup_icon("/usr/share/icons/breeze-dark/actions/24@2x/backup.svg")
     },
-    { "Reboot", "systemctl reboot", menubar.utils.lookup_icon("/usr/share/icons/Arc/actions/24@2x/system-log-out.png") },
+    { "Reboot", "systemctl reboot",
+        menubar.utils.lookup_icon("/usr/share/icons/breeze-dark/actions/24@2x/system-reboot.svg") },
     { "Close All", function() close_all_open_clients() end,
-        menubar.utils.lookup_icon("/usr/share/icons/Arc/actions/24@2x/stock_close.png") },
+        menubar.utils.lookup_icon("/usr/share/icons/breeze-dark/actions/24@2x/cross-shape.svg") },
     { "Shutdown", "systemctl poweroff",
-        menubar.utils.lookup_icon("/usr/share/icons/Arc/actions/24@2x/system-shutdown.png") }
+        menubar.utils.lookup_icon("/usr/share/icons/breeze-dark/actions/24@2x/system-shutdown.svg") }
 }
 
 m_theme = {
     border_width = 2,
     border_color = '#d08770',
     height = 30,
-    width = 130,
-    font = "UbuntuMono Nerd Font 12"
+    width = 160,
+    font = "Hack Nerd Font 8"
 }
 
 quitpopup = awful.menu({ items = myquitmenu, theme = m_theme })
@@ -141,7 +138,7 @@ end)
 local function quitmenu()
     s = awful.screen.focused()
     m_coords = {
-        x = s.geometry.x + (s.workarea.width - 140),
+        x = s.geometry.x + (s.workarea.width - 170),
         y = 30
     }
     quitpopup:show({ coords = m_coords })
@@ -152,7 +149,9 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- {{{ Wibar
 -- Create a textclock widget
-mytextclock = wibox.widget.textclock("%a %d.%m.%y %H:%M ", 60)
+mytextclock = wibox.widget.textclock("%H:%M ", 60)
+mytextcal = wibox.widget.textclock("%a %d.%m.%y", 60)
+myspacer = wibox.widget.textbox(" ")
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -235,19 +234,12 @@ awful.screen.connect_for_each_screen(function(s)
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist {
         screen  = s,
-        filter  = awful.widget.taglist.filter.noempty,
+        filter  = awful.widget.taglist.filter.all,
         buttons = taglist_buttons,
     }
 
-    -- Create a tasklist widget
-    s.mytasklist = awful.widget.tasklist {
-        screen  = s,
-        filter  = awful.widget.tasklist.filter.minimizedcurrenttags,
-        buttons = tasklist_buttons
-    }
-
     myquitbtn = wibox.widget {
-        image  = '/home/bp/Pictures/Logos/geeko-button-colour.svg',
+        image  = '/usr/share/icons/breeze-dark/actions/24@2x/system-shutdown.svg',
         resize = true,
         widget = wibox.widget.imagebox,
     }
@@ -261,27 +253,34 @@ awful.screen.connect_for_each_screen(function(s)
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
         expand = "none",
+        -- Left widgets
         {
-            -- Left widgets
+            layout = wibox.layout.fixed.horizontal,
+            -- wibox.container.margin(
+            --     0, 0),
+            battery_widget({
+                path_to_icons = "/usr/share/icons/Papirus-Dark/symbolic/status/"
+            }),
+            ram_widget(),
+            cpu_widget(),
+            s.mypromptbox,
+        },
+        -- Middle widget
+        {
             layout = wibox.layout.fixed.horizontal,
             wibox.container.margin(
                 s.mylayoutbox,
-                1, 2),
+                3, 10, 3, 3),
             s.mytaglist,
-            s.mypromptbox,
-            s.mytasklist,
         },
-        -- Middle widget
-        mytextclock,
+        -- Right widgets
         {
-            -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            cpu_widget(),
-            ram_widget(),
             systemtray,
-            wibox.container.margin(
-                battery_widget(),
-                1, 5),
+            myspacer,
+            mytextcal,
+            myspacer,
+            mytextclock,
             myquitbtn,
         },
     }
@@ -314,29 +313,30 @@ globalkeys = gears.table.join(
 
     -- By-direction client focus
     awful.key({ modkey }, "j", function()
-        awful.client.focus.global_bydirection("down")
+        -- awful.client.focus.global_bydirection("down")
+        awful.client.focus.byidx(1)
         if client.focus then
             client.focus:raise()
         end
-    end, { description = "focus down", group = "client" }),
+    end, { description = "focus next client", group = "client" }),
     awful.key({ modkey }, "k", function()
-        awful.client.focus.global_bydirection("up")
+        awful.client.focus.byidx(-1)
         if client.focus then
             client.focus:raise()
         end
-    end, { description = "focus up", group = "client" }),
+    end, { description = "focus previous client", group = "client" }),
     awful.key({ modkey }, "h", function()
-        awful.client.focus.global_bydirection("left")
+        awful.screen.focus_relative(-1)
         if client.focus then
             client.focus:raise()
         end
-    end, { description = "focus left", group = "client" }),
+    end, { description = "focus previous screen", group = "screen" }),
     awful.key({ modkey }, "l", function()
-        awful.client.focus.global_bydirection("right")
+        awful.screen.focus_relative(1)
         if client.focus then
             client.focus:raise()
         end
-    end, { description = "focus right", group = "client" }),
+    end, { description = "focus next screen", group = "screen" }),
 
     -- Layout manipulation
     awful.key({ modkey, "Shift" }, "j", function()
@@ -345,12 +345,6 @@ globalkeys = gears.table.join(
     awful.key({ modkey, "Shift" }, "k", function()
         awful.client.swap.byidx(-1)
     end, { description = "swap with previous client by index", group = "client" }),
-    awful.key({ modkey, "Control" }, "j", function()
-        awful.screen.focus_relative(1)
-    end, { description = "focus the next screen", group = "screen" }),
-    awful.key({ modkey, "Control" }, "k", function()
-        awful.screen.focus_relative(-1)
-    end, { description = "focus the previous screen", group = "screen" }),
     awful.key({ modkey }, "u", awful.client.urgent.jumpto, { description = "jump to urgent client", group = "client" }),
 
     -- Show/hide wibox
@@ -365,19 +359,20 @@ globalkeys = gears.table.join(
 
     -- swap screens
 
-    awful.key({ modkey, "Control" }, "o", function()
+    awful.key({ modkey, "Shift" }, "o", function()
         local c = awful.screen.focused().get_clients()
         for cCount = 1, #c do
             c[cCount]:move_to_screen()
         end
+        awful.screen.focus_relative(1)
     end, { description = "swap screens", group = "screen" }),
 
     -- Standard program
-    awful.key({ modkey }, "Return", function()
+    awful.key({ modkey, "Shift" }, "Return", function()
         awful.spawn(terminal)
     end, { description = "open a terminal", group = "launcher" }),
     awful.key({ modkey, "Control" }, "r", awesome.restart, { description = "reload awesome", group = "awesome" }),
-    awful.key({ modkey, "Shift" }, "c", awesome.quit, { description = "quit awesome", group = "awesome" }),
+    awful.key({ modkey, "Control" }, "q", awesome.quit, { description = "quit awesome", group = "awesome" }),
     awful.key({ modkey, "Shift" }, "l", function() awful.tag.incmwfact(0.05) end,
         { description = "increase master width factor", group = "layout" }),
     awful.key({ modkey, "Shift" }, "h", function() awful.tag.incmwfact(-0.05) end,
@@ -436,9 +431,9 @@ clientkeys = gears.table.join(
         { description = "toggle floating", group = "client" }
     ),
 
-    awful.key({ modkey, "Control" }, "Return", function(c)
+    awful.key({ modkey }, "Return", function(c)
         c:swap(awful.client.getmaster())
-    end, { description = "move to master", group = "client" }),
+    end, { description = "promote focused to master", group = "client" }),
 
     awful.key({ modkey }, "o", function(c)
         c:move_to_screen()
