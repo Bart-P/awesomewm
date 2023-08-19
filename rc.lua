@@ -111,14 +111,14 @@ mylauncher = awful.widget.launcher({
 -- {{{ Helper function for quitmenu
 myquitmenu = {
     { "Log Out", function() awesome.quit() end,
-        menubar.utils.lookup_icon("/usr/share/icons/breeze-dark/actions/24@2x/backup.svg")
+        menubar.utils.lookup_icon("/usr/share/icons/Papirus-Dark/24x24/apps/system-log-out.svg")
     },
     { "Reboot", "systemctl reboot",
-        menubar.utils.lookup_icon("/usr/share/icons/breeze-dark/actions/24@2x/system-reboot.svg") },
+        menubar.utils.lookup_icon("/usr/share/icons/Papirus-Dark/24x24/apps/system-reboot.svg") },
     { "Close All", function() close_all_open_clients() end,
-        menubar.utils.lookup_icon("/usr/share/icons/breeze-dark/actions/24@2x/cross-shape.svg") },
+        menubar.utils.lookup_icon("/usr/share/icons/Papirus-Dark/24x24/apps/system-suspend.svg") },
     { "Shutdown", "systemctl poweroff",
-        menubar.utils.lookup_icon("/usr/share/icons/breeze-dark/actions/24@2x/system-shutdown.svg") }
+        menubar.utils.lookup_icon("/usr/share/icons/Papirus-Dark/24x24/apps/system-shutdown.svg") }
 }
 
 m_theme = {
@@ -148,10 +148,32 @@ end
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 
 -- {{{ Wibar
--- Create a textclock widget
-mytextclock = wibox.widget.textclock("%H:%M ", 60)
+mytextclock = wibox.widget.textclock("%H:%M", 60)
+myclockicon = wibox.container.margin(
+    wibox.widget {
+        image = '/usr/share/icons/Papirus-Dark/24x24/apps/clock.svg',
+        resize = true,
+        widget = wibox.widget.imagebox,
+    },
+    0, 5, 2, 2)
+mycalicon = wibox.container.margin(
+    wibox.widget {
+        image = '/usr/share/icons/Papirus-Dark/24x24/apps/calendar.svg',
+        resize = true,
+        widget = wibox.widget.imagebox,
+    },
+    0, 5, 2, 2)
 mytextcal = wibox.widget.textclock("%a %d.%m.%y", 60)
 myspacer = wibox.widget.textbox(" ")
+
+myquitbtn = wibox.container.margin(
+    wibox.widget {
+        image  = '/usr/share/icons/Papirus-Dark/24x24/apps/system-shutdown.svg',
+        resize = true,
+        widget = wibox.widget.imagebox,
+    },
+    5, 2, 2, 2)
+myquitbtn:connect_signal("button::press", function() quitmenu() end)
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -238,14 +260,6 @@ awful.screen.connect_for_each_screen(function(s)
         buttons = taglist_buttons,
     }
 
-    myquitbtn = wibox.widget {
-        image  = '/usr/share/icons/breeze-dark/actions/24@2x/system-shutdown.svg',
-        resize = true,
-        widget = wibox.widget.imagebox,
-    }
-
-    myquitbtn:connect_signal("button::press", function() quitmenu() end)
-
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "top", screen = s })
 
@@ -259,10 +273,13 @@ awful.screen.connect_for_each_screen(function(s)
             -- wibox.container.margin(
             --     0, 0),
             battery_widget({
-                path_to_icons = "/usr/share/icons/Papirus-Dark/symbolic/status/"
+                font = "Hack 9",
+                path_to_icons = "/usr/share/icons/Papirus-Dark/symbolic/status/",
             }),
             ram_widget(),
             cpu_widget(),
+            myspacer,
+            systemtray,
             s.mypromptbox,
         },
         -- Middle widget
@@ -276,10 +293,11 @@ awful.screen.connect_for_each_screen(function(s)
         -- Right widgets
         {
             layout = wibox.layout.fixed.horizontal,
-            systemtray,
             myspacer,
+            mycalicon,
             mytextcal,
             myspacer,
+            myclockicon,
             mytextclock,
             myquitbtn,
         },
