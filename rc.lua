@@ -47,7 +47,7 @@ do
 end
 -- }}}
 
--- awful.spawn("/home/bp/Scripts/autostart.sh")
+awful.spawn("/home/bp/Scripts/autostart.sh")
 
 -- {{{ User Function definitions
 -- this will close all clients on all tags and screens
@@ -215,6 +215,8 @@ local tasklist_buttons = gears.table.join(
         awful.client.focus.byidx(-1)
     end))
 
+-- mytasklist = awful.widget.tasklist
+
 local function set_wallpaper(s)
     -- Wallpaper
     if beautiful.wallpaper then
@@ -233,6 +235,7 @@ screen.connect_signal("property::geometry", set_wallpaper)
 systemtray = wibox.widget.systray()
 local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
 local battery_widget = require("awesome-wm-widgets.battery-widget.battery")
+local batteryarc_widget = require("awesome-wm-widgets.batteryarc-widget.batteryarc")
 local cpu_widget = require("awesome-wm-widgets.cpu-widget.cpu-widget")
 local ram_widget = require("awesome-wm-widgets.ram-widget.ram-widget")
 
@@ -272,14 +275,16 @@ awful.screen.connect_for_each_screen(function(s)
             layout = wibox.layout.fixed.horizontal,
             -- wibox.container.margin(
             --     0, 0),
-            battery_widget({
-                font = "Hack 9",
-                path_to_icons = "/usr/share/icons/Papirus-Dark/symbolic/status/",
-            }),
+            batteryarc_widget(),
+            -- battery_widget({
+            --     font = "Hack 9",
+            --     path_to_icons = "/usr/share/icons/Papirus-Dark/symbolic/status/",
+            -- }),
             ram_widget(),
             cpu_widget(),
             myspacer,
             systemtray,
+            -- s.mytasklist,
             s.mypromptbox,
         },
         -- Middle widget
@@ -425,6 +430,10 @@ globalkeys = gears.table.join(
     -- Prompt
     awful.key({ modkey }, "r", function()
         awful.spawn("rofi -show run")
+    end, { description = "run prompt", group = "launcher" }),
+
+    awful.key({ modkey }, "w", function()
+        awful.spawn("rofi -show window")
     end, { description = "run prompt", group = "launcher" })
 )
 
