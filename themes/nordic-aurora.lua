@@ -32,7 +32,7 @@ colors.danger               = "#bf616a"
 
 local theme                 = {}
 
-theme.font                  = "Hack 9"
+theme.font                  = "Ubuntu Nerd Font 8"
 
 theme.bg_normal             = colors.dark1
 theme.bg_focus              = colors.dark1
@@ -54,6 +54,7 @@ theme.taglist_bg_urgent     = colors.secondary
 theme.taglist_fg_focus      = colors.dark1
 theme.taglist_fg_occupied   = colors.accent
 theme.taglist_fg_empty      = colors.dark3
+theme.taglist_fg_urgent     = colors.dark3
 
 theme.wibar_border_width    = 2
 theme.wibar_border_color    = colors.dark1
