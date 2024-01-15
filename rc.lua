@@ -47,7 +47,7 @@ do
 end
 -- }}}
 
-awful.spawn("/home/bp/Scripts/autostart.sh")
+awful.spawn.with_shell("/home/bp/Scripts/autostart.sh")
 
 -- {{{ User Function definitions
 -- this will close all clients on all tags and screens
@@ -126,7 +126,7 @@ m_theme = {
     border_color = '#d08770',
     height = 30,
     width = 160,
-    font = "Hack Nerd Font 8"
+    font = "Ubuntu Nerd Font 8"
 }
 
 quitpopup = awful.menu({ items = myquitmenu, theme = m_theme })
@@ -215,8 +215,6 @@ local tasklist_buttons = gears.table.join(
         awful.client.focus.byidx(-1)
     end))
 
--- mytasklist = awful.widget.tasklist
-
 local function set_wallpaper(s)
     -- Wallpaper
     if beautiful.wallpaper then
@@ -233,8 +231,8 @@ end
 screen.connect_signal("property::geometry", set_wallpaper)
 
 systemtray = wibox.widget.systray()
-local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
-local battery_widget = require("awesome-wm-widgets.battery-widget.battery")
+-- local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
+-- local battery_widget = require("awesome-wm-widgets.battery-widget.battery")
 local batteryarc_widget = require("awesome-wm-widgets.batteryarc-widget.batteryarc")
 local cpu_widget = require("awesome-wm-widgets.cpu-widget.cpu-widget")
 local ram_widget = require("awesome-wm-widgets.ram-widget.ram-widget")
@@ -263,6 +261,12 @@ awful.screen.connect_for_each_screen(function(s)
         buttons = taglist_buttons,
     }
 
+    s.mytasklist = awful.widget.tasklist {
+        screen = s,
+        filter = awful.widget.tasklist.filter.currenttags,
+        buttons = tasklist_buttons
+    }
+
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "top", screen = s })
 
@@ -273,9 +277,13 @@ awful.screen.connect_for_each_screen(function(s)
         -- Left widgets
         {
             layout = wibox.layout.fixed.horizontal,
-            -- wibox.container.margin(
-            --     0, 0),
-            batteryarc_widget(),
+            wibox.container.margin(
+                batteryarc_widget({
+                    font = "Hack 9",
+                    show_current_level = true,
+                    notification_position = 'top_left'
+                }),
+                3, 3, 3, 3),
             -- battery_widget({
             --     font = "Hack 9",
             --     path_to_icons = "/usr/share/icons/Papirus-Dark/symbolic/status/",
@@ -284,8 +292,8 @@ awful.screen.connect_for_each_screen(function(s)
             cpu_widget(),
             myspacer,
             systemtray,
-            -- s.mytasklist,
             s.mypromptbox,
+            -- s.mytasklist,
         },
         -- Middle widget
         {
@@ -313,9 +321,9 @@ end)
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
     awful.button({}, 3, function() mymainmenu:toggle() end)
+))
 -- awful.button({}, 4, awful.tag.viewnext),
 -- awful.button({}, 5, awful.tag.viewprev)
-))
 -- }}}
 
 -- {{{ Key bindings
@@ -596,7 +604,8 @@ awful.rules.rules = {
                 "Tor Browser", -- Needs a fixed window size to avoid fingerprinting by screen size.
                 "Wpa_gui",
                 "veromix",
-                "xtightvncviewer"
+                "xtightvncviewer",
+                "Gnome-calculator"
             },
             -- Note that the name property shown in xprop might be set slightly after creation of the client
             -- and the name shown there might not match defined rules here.
@@ -648,3 +657,12 @@ end)
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
+
+-- Should prevent garbage collector to get filled up with time
+collectgarbage("setpause", 160)
+collectgarbage("setstepmul", 400)
+
+gears.timer.start_new(10, function()
+    collectgarbage("step", 20000)
+    return true
+end)
