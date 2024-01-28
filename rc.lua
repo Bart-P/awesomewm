@@ -63,7 +63,7 @@ end
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
 -- beautiful.init(gears.filesystem.get_configuration_dir() .. "themes/nordic-aurora.lua")
-beautiful.init(gears.filesystem.get_configuration_dir() .. "themes/nordic-aurora.lua")
+beautiful.init(gears.filesystem.get_configuration_dir() .. "themes/catpuccin-macchiato.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "kitty"
@@ -234,8 +234,6 @@ systemtray = wibox.widget.systray()
 -- local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
 -- local battery_widget = require("awesome-wm-widgets.battery-widget.battery")
 local batteryarc_widget = require("awesome-wm-widgets.batteryarc-widget.batteryarc")
-local cpu_widget = require("awesome-wm-widgets.cpu-widget.cpu-widget")
-local ram_widget = require("awesome-wm-widgets.ram-widget.ram-widget")
 
 awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
@@ -288,8 +286,8 @@ awful.screen.connect_for_each_screen(function(s)
             --     font = "Hack 9",
             --     path_to_icons = "/usr/share/icons/Papirus-Dark/symbolic/status/",
             -- }),
-            ram_widget(),
-            cpu_widget(),
+            -- ram_widget(),
+            -- cpu_widget(),
             myspacer,
             systemtray,
             s.mypromptbox,
@@ -379,14 +377,14 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "u", awful.client.urgent.jumpto, { description = "jump to urgent client", group = "client" }),
 
     -- Show/hide wibox
-    awful.key({ modkey }, "b", function()
+    awful.key({ modkey, "Shift" }, "b", function()
         for s in screen do
             s.mywibox.visible = not s.mywibox.visible
             if s.mybottomwibox then
                 s.mybottomwibox.visible = not s.mybottomwibox.visible
             end
         end
-    end, { description = "toggle wibox", group = "awesome" }),
+    end, { description = "toggle wibox (top bar)", group = "awesome" }),
 
     -- swap screens
 
@@ -442,7 +440,12 @@ globalkeys = gears.table.join(
 
     awful.key({ modkey }, "w", function()
         awful.spawn("rofi -show window")
-    end, { description = "run prompt", group = "launcher" })
+    end, { description = "run prompt", group = "launcher" }),
+
+    awful.key({ modkey }, "b", function()
+        awful.spawn(
+            "rofi -show firefox_bookmarks -modi 'firefox_bookmarks:/home/bp/Scripts/rofi/rofi_firefox_bookmarks.sh'")
+    end, { description = "search firefox bookmarks", group = "launcher" })
 )
 
 clientkeys = gears.table.join(
