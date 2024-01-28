@@ -101,7 +101,10 @@ theme.menu_width        = dpi(100)
 --theme.bg_widget = "#cc0000"
 
 -- Define the image to load
-theme.wallpaper         = "~/Pictures/Walls/Blue Firewatch 2560x1600 wallpapers.png"
+-- TODO: make the circuit wallpaper work... probably webp format does not want
+-- to work... Test it out.
+-- theme.wallpaper         = "~/Pictures/Walls/Blue Firewatch 2560x1600 wallpapers.png"
+-- theme.wallpaper         = "~/Pictures/Walls/ciruit.png"
 
 -- You can use your own layout icons like this:
 theme.layout_floating   = "~/Pictures/LayoutIcons/layout-floating.png"
