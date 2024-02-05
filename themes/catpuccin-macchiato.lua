@@ -57,11 +57,12 @@ theme.wibar_border_color    = colors.dark1
 theme.wibar_height          = 22
 
 theme.tasklist_disable_icon = true
-client.connect_signal("manage", function(c)
-    c.shape = function(cr, w, h)
-        gears.shape.rounded_rect(cr, w, h, 10)
-    end
-end)
+-- Uncomment for rounded corners on all clients
+-- client.connect_signal("manage", function(c)
+--     c.shape = function(cr, w, h)
+--         gears.shape.rounded_rect(cr, w, h, 10)
+--     end
+-- end)
 
 -- There are other variable sets
 -- overriding the default one when
@@ -87,9 +88,9 @@ end)
 -- Variables set for theming the menu:
 -- menu_[bg|fg]_[normal|focus]
 -- menu_[border_color|border_width]
-theme.menu_submenu_icon = themes_path .. "default/submenu.png"
-theme.menu_height       = dpi(15)
-theme.menu_width        = dpi(100)
+theme.menu_submenu_icon     = themes_path .. "default/submenu.png"
+theme.menu_height           = dpi(15)
+theme.menu_width            = dpi(100)
 
 -- You can add as many variables as
 -- you wish and access them by using
@@ -103,18 +104,18 @@ theme.menu_width        = dpi(100)
 -- theme.wallpaper         = "~/Pictures/Walls/ciruit.png"
 
 -- You can use your own layout icons like this:
-theme.layout_floating   = "~/Pictures/LayoutIcons/layout-floating.png"
-theme.layout_tile       = "~/Pictures/LayoutIcons/layout-monadtall.png"
-theme.layout_max        = "~/Pictures/LayoutIcons/layout-max.png"
+theme.layout_floating       = "~/Pictures/LayoutIcons/layout-floating.png"
+theme.layout_tile           = "~/Pictures/LayoutIcons/layout-monadtall.png"
+theme.layout_max            = "~/Pictures/LayoutIcons/layout-max.png"
 
 -- Generate Awesome icon:
-theme.awesome_icon      = theme_assets.awesome_icon(
+theme.awesome_icon          = theme_assets.awesome_icon(
     theme.menu_height, theme.bg_focus, theme.fg_focus
 )
 
 -- Define the icon theme for application icons. If not set then the icons
 -- from /usr/share/icons and /usr/share/icons/hicolor will be used.
-theme.icon_theme        = nil
+theme.icon_theme            = nil
 
 return theme
 

@@ -18,6 +18,8 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
+require("mickey")
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -118,12 +120,12 @@ myquitmenu = {
     { "Close All", function() close_all_open_clients() end,
         menubar.utils.lookup_icon("/usr/share/icons/Papirus-Dark/24x24/apps/system-suspend.svg") },
     { "Shutdown", "systemctl poweroff",
-        menubar.utils.lookup_icon("/usr/share/icons/Papirus-Dark/24x24/apps/system-shutdown.svg") }
+        menubar.utils.lookup_icon("/usr/share/icons/Papirus-Dark/24x24/apps/system-shutdown.svg") },
 }
 
 m_theme = {
     border_width = 2,
-    border_color = '#d08770',
+    border_color = '#c6a0f6',
     height = 30,
     width = 160,
     font = "Ubuntu Nerd Font 8"
@@ -215,30 +217,10 @@ local tasklist_buttons = gears.table.join(
         awful.client.focus.byidx(-1)
     end))
 
-local function set_wallpaper(s)
-    -- Wallpaper
-    if beautiful.wallpaper then
-        local wallpaper = beautiful.wallpaper
-        -- If wallpaper is a function, call it with the screen
-        if type(wallpaper) == "function" then
-            wallpaper = wallpaper(s)
-        end
-        gears.wallpaper.maximized(wallpaper, s, true)
-    end
-end
-
--- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
-screen.connect_signal("property::geometry", set_wallpaper)
-
 systemtray = wibox.widget.systray()
--- local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
--- local battery_widget = require("awesome-wm-widgets.battery-widget.battery")
 local batteryarc_widget = require("awesome-wm-widgets.batteryarc-widget.batteryarc")
 
 awful.screen.connect_for_each_screen(function(s)
-    -- Wallpaper
-    set_wallpaper(s)
-
     -- Each screen has its own tag table.
     awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
 
@@ -282,12 +264,6 @@ awful.screen.connect_for_each_screen(function(s)
                     notification_position = 'top_left'
                 }),
                 3, 3, 3, 3),
-            -- battery_widget({
-            --     font = "Hack 9",
-            --     path_to_icons = "/usr/share/icons/Papirus-Dark/symbolic/status/",
-            -- }),
-            -- ram_widget(),
-            -- cpu_widget(),
             myspacer,
             systemtray,
             s.mypromptbox,
