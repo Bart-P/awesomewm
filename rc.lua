@@ -64,7 +64,6 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
--- beautiful.init(gears.filesystem.get_configuration_dir() .. "themes/nordic-aurora.lua")
 beautiful.init(gears.filesystem.get_configuration_dir() .. "themes/catpuccin-macchiato.lua")
 
 -- This is used later as the default terminal and editor to run.
@@ -267,7 +266,7 @@ awful.screen.connect_for_each_screen(function(s)
             myspacer,
             systemtray,
             s.mypromptbox,
-            -- s.mytasklist,
+            s.mytasklist,
         },
         -- Middle widget
         {
@@ -409,6 +408,7 @@ globalkeys = gears.table.join(
     awful.key({ modkey }, "space", function()
         awful.spawn("rofi -combi-modi -show drun")
     end, { description = "show rofi", group = "launcher" }),
+
     -- Prompt
     awful.key({ modkey }, "r", function()
         awful.spawn("rofi -show run")
@@ -605,12 +605,6 @@ awful.rules.rules = {
         rule_any = { type = { "normal", "dialog", "popup" } },
         properties = { placement = awful.placement.centered },
     },
-
-    -- Add titlebars to normal clients and dialogs
-
-    -- Set Firefox to always map on the tag named "2" on screen 1.
-    -- { rule = { class = "Firefox" },
-    --   properties = { screen = 1, tag = "2" } },
 }
 -- }}}
 
