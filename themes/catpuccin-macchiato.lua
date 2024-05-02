@@ -28,7 +28,7 @@ colors.danger               = "#ed8796"
 
 local theme                 = {}
 
-theme.font                  = "Ubuntu Nerd Font 8"
+theme.font                  = "Ubuntu Nerd Font 7"
 
 theme.bg_normal             = colors.dark1
 theme.bg_focus              = colors.dark1
