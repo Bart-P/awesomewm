@@ -39,7 +39,7 @@ theme.fg_normal             = colors.light3
 theme.fg_focus              = colors.primary
 theme.fg_urgent             = colors.secondary
 
-theme.useless_gap           = dpi(4)
+theme.useless_gap           = dpi(3)
 theme.border_width          = dpi(1)
 theme.border_normal         = colors.dark1
 theme.border_focus          = colors.primary
